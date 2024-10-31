@@ -1,93 +1,29 @@
 import _ from 'lodash';
 import './style.css';
-import * as THREE from 'three';
 
-// creaate canvas
-const canvasEl = document.createElement("canvas")
+const indexBox = document.createElement("div")
+indexBox.setAttribute("id", "index-box")
+document.body.appendChild(indexBox)
 
-canvasEl.setAttribute("id", "threejs-canvas")
-document.body.appendChild(canvasEl)
+const title = document.createElement("h1")
+title.setAttribute("id", "title")
+title.innerText = "Three.js 스터디 코드 모음"
+indexBox.appendChild(title)
 
-// create renderer
-const renderer = new THREE.WebGLRenderer({ canvas: canvasEl });
+const weeks = [
+  "움직이는 큐브들",
+  "여러 원시모델 쇼케이스"
+]
 
-// create camera
-const fov = 75;
-const aspect = 2;  // the canvas default
-const near = 0.1;
-const far = 5;
-const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-camera.position.z = 2;
+const weekBox = document.createElement("div")
+weekBox.setAttribute("id", "week-box")
+indexBox.appendChild(weekBox)
 
-// create scene
-const scene = new THREE.Scene();
-
-// create light
-const color = 0xFFFFFF;
-const intensity = 3;
-const light = new THREE.DirectionalLight(color, intensity);
-light.position.set(-1, 2, 4);
-scene.add(light);
-
-// create cubes
-function makeInstance(geometry, color, x) {
-  const material = new THREE.MeshPhongMaterial({ color });
-
-  const cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
-
-  cube.position.x = x;
-
-  return cube;
-}
-const boxWidth = 1;
-const boxHeight = 1;
-const boxDepth = 1;
-const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
-
-const cubes = [
-  makeInstance(geometry, 0x44aa88, 0),
-  makeInstance(geometry, 0x8844aa, -2),
-  makeInstance(geometry, 0xaa8844, 2),
-];
-
-
-// render
-console.log(renderer.domElement)
-function resizeRendererToDisplaySize(renderer, camera) {
-  const canvas = renderer.domElement;
-
-  const pixelRatio = window.devicePixelRatio;
-  // const width = canvas.clientWidth;
-  // const height = canvas.clientHeight;
-  // const needResize = canvas.width !== width || canvas.height !== height;
-
-  const width = Math.floor(canvas.clientWidth * pixelRatio);
-  const height = Math.floor(canvas.clientHeight * pixelRatio);
-  const needResize = canvas.width !== width || canvas.height !== height;
-
-  if (needResize) {
-    renderer.setSize(width, height, false);
-    camera.aspect = canvas.clientWidth / canvas.clientHeight;
-    camera.updateProjectionMatrix();
-  }
-  return needResize;
-}
-
-function render(time) {
-  time *= 0.001;  // convert time to seconds
-
-  cubes.forEach((cube, ndx) => {
-    const speed = 1 + ndx * .1;
-    const rot = time * speed;
-    cube.rotation.x = rot;
-    cube.rotation.y = rot;
-  });
-
-  resizeRendererToDisplaySize(renderer, camera)
-  renderer.render(scene, camera);
-
-  requestAnimationFrame(render);
-}
-
-requestAnimationFrame(render);
+weeks.forEach((weekTitle, wi) => {
+  const linkbox = document.createElement("div")
+  const link = document.createElement("a")
+  link.innerText = weekTitle
+  link.href = `week${wi+1}.html`
+  linkbox.appendChild(link)
+  weekBox.appendChild(linkbox)
+});

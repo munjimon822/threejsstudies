@@ -2,10 +2,14 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: {
+    index:'./src/index.js',
+    week1:'./src/week1.js',
+    week2:'./src/week2.js'
+  },
   mode:'development',
   output: {
-    filename: '[name].bundle.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
   },
@@ -18,7 +22,19 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'ThreejsStudies',
+      filename: 'index.html',
+      chunks: ['index'],
+      title: 'Threejs Studies',
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'week1.html',
+      chunks: ['week1'],
+      title: '[Threejs] Week1',
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'week2.html',
+      chunks: ['week2'],
+      title: '[Threejs] Week2',
     }),
   ],
   module: {

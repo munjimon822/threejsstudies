@@ -1,11 +1,22 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+const weekEntries = {}
+const plugins = []
+for (let i = 0; i < 3; i ++) {
+  weekEntries[`week${i+1}`] = `./src/week${i+1}.js`
+  plugins.push(new HtmlWebpackPlugin({
+    filename: `week${i+1}.html`,
+    chunks: [`week${i + 1}`],
+    title: `[Threejs] Week${i + 1}`,
+  }))
+}
+
 module.exports = {
   entry: {
     index:'./src/index.js',
-    week1:'./src/week1.js',
-    week2:'./src/week2.js'
+    ...weekEntries,
+    week3_1:'./src/week3-1.js'
   },
   mode:'development',
   output: {
@@ -26,15 +37,11 @@ module.exports = {
       chunks: ['index'],
       title: 'Threejs Studies',
     }),
+    ...plugins,
     new HtmlWebpackPlugin({
-      filename: 'week1.html',
-      chunks: ['week1'],
-      title: '[Threejs] Week1',
-    }),
-    new HtmlWebpackPlugin({
-      filename: 'week2.html',
-      chunks: ['week2'],
-      title: '[Threejs] Week2',
+      filename: 'week3-1.html',
+      chunks: ['week3_1'],
+      title: 'Threejs Studies week3-1',
     }),
   ],
   module: {

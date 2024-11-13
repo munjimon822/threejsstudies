@@ -12,7 +12,8 @@ indexBox.appendChild(title)
 
 const weeks = [
   "움직이는 큐브들",
-  "여러 원시모델 쇼케이스"
+  "여러 원시모델 쇼케이스",
+  "태양계"
 ]
 
 const weekBox = document.createElement("div")
@@ -27,3 +28,15 @@ weeks.forEach((weekTitle, wi) => {
   linkbox.appendChild(link)
   weekBox.appendChild(linkbox)
 });
+
+
+const extras = [{"title": "탱크", "html":"week3-1.html"}]
+
+extras.map((data) => {
+  const linkbox = document.createElement("div")
+  const link = document.createElement("a")
+  link.innerText = data.title
+  link.href = data.html
+  linkbox.appendChild(link)
+  weekBox.appendChild(linkbox) 
+})

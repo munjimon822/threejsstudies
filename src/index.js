@@ -13,7 +13,8 @@ indexBox.appendChild(title)
 const weeks = [
   "움직이는 큐브들",
   "여러 원시모델 쇼케이스",
-  "태양계"
+  "태양계",
+  "재질, 텍스처, 카메라"
 ]
 
 const weekBox = document.createElement("div")

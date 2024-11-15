@@ -123,7 +123,7 @@ function main() {
       map: texture,
       side: THREE.DoubleSide, // 카메라를 뒤집어보면 아무것도 안보이는데 조명이 없어서 그렇게 보임. 
     });
-    // scene.add(new THREE.AmbientLight()); // 평면 반대편 확인용
+    scene.add(new THREE.AmbientLight()); // 평면 반대편 확인용
 
     const mesh = new THREE.Mesh(planeGeo, planeMat);
     mesh.rotation.x = Math.PI * - .5; 
@@ -173,7 +173,6 @@ function main() {
       new THREE.MeshStandardMaterial({ color: color, roughness: 0.5, metalness: 0.5 }),
       new THREE.MeshPhysicalMaterial({ color: color, roughness: 0.5, metalness: 0.5, clearcoat: 1, clearcoatRoughness: 0.1 }),
       new THREE.MeshNormalMaterial(),
-
     ]
 
     for (let i = 0; i < shpereMats.length; i++) {
@@ -187,7 +186,8 @@ function main() {
 
   {
     // 다양한 textures
-    const loader = new THREE.TextureLoader();
+    const loadManager = new THREE.LoadingManager();
+    const loader = new THREE.TextureLoader(loadManager);
     const cubeSize = 4;
     const cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
     const materials = [ 
@@ -203,15 +203,18 @@ function main() {
       new THREE.MeshBasicMaterial({ map: loadColorTexture(require('../assets/flower-6.jpg')) }),
     ];
 
-    const cube = new THREE.Mesh(cubeGeo, materials);
-    cube.position.set(0,cubeSize,-10)
-    scene.add(cube)
-    
     function loadColorTexture(path) {
       const texture = loader.load(path); 
       texture.colorSpace = THREE.SRGBColorSpace;
       return texture;
     }
+    // 까맣게 보이는 이슈 해결. 텍스쳐가 모두 로딩 된 후 렌더함수재호출
+    loadManager.onLoad = () => {
+      const cube = new THREE.Mesh(cubeGeo, materials);
+      cube.position.set(0, cubeSize, -10)
+      scene.add(cube);
+      render()
+    };
   }
 
   {

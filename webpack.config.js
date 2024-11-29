@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const weekEntries = {}
 const plugins = []
-const CURRENT_WEEK = 4
+const CURRENT_WEEK = 5
 
 for (let i = 0; i < CURRENT_WEEK; i ++) {
   weekEntries[`week${i+1}`] = `./src/week${i+1}.js`

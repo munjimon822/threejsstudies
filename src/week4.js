@@ -59,7 +59,7 @@ function main() {
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
 
-  const aspect = window.clientWidth / 2 / window.clientHeight; // the canvas default
+  const aspect = window.clientWidth / window.clientHeight; // the canvas default
   const camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 100);
   camera.position.set(0, 10, 20);
 

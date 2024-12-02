@@ -12,7 +12,7 @@ function main() {
 	const renderer = new THREE.WebGLRenderer( { antialias: true, canvas } );
 
 	const fov = 75;
-  const aspect = window.clientWidth / 2 / window.clientHeight; // the canvas default
+  const aspect = window.clientWidth / window.clientHeight;
 	const near = 0.1;
 	const far = 1000;
 	const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
@@ -33,7 +33,6 @@ function main() {
   addLight(lightP, -lightP, 50 );
   addLight(-lightP, lightP, -50 );
 
-
   const container = new THREE.Object3D()
   scene.add(container)
 
@@ -51,28 +50,17 @@ function main() {
 
   const extrudeSettings = {
     steps: 1,
-
     depth: 1.0,
-
     bevelEnabled: true,
     bevelThickness: 1.26,
-
     bevelSize: 2.59,
-
     bevelSegments: 4,
-
   };
 
   const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
   geometry.scale(1, -1, 1);  // Y축 반전
-  // Check if the geometry has an index (for indexed geometry)
-  const positions = geometry.attributes.position.array;
-  // const material = new THREE.MeshPhongMaterial({
-  //   color: 0xff1537,
-  //   side: THREE.DoubleSide,
-  //   shininess: 100,
-  // });
 
+  const positions = geometry.attributes.position.array;
   const material = new THREE.MeshStandardMaterial({
     color: 0xff1537,
     side: THREE.DoubleSide,
@@ -91,21 +79,18 @@ function main() {
       positions[i + 3], positions[i + 4], positions[i + 5],
       positions[i + 6], positions[i + 7], positions[i + 8]
     ]
-    cubePositions.push(new THREE.Vector3(...trianglePositions))
+    cubePositions.push(new THREE.Vector3().subVectors(
+      new THREE.Vector3(positions[i], positions[i + 1], positions[i + 2]),
+      new THREE.Vector3(0, 0, 0)
+    ).normalize())
 
     const geometry = new THREE.BufferGeometry();
-    const positionNumComponents = 3;
-    const normalNumComponents = 3;
-    const positionAttribute = new THREE.BufferAttribute(new Float32Array(trianglePositions), positionNumComponents)
-    positionAttribute.setUsage(THREE.DynamicDrawUsage);
-    geometry.setAttribute('position', positionAttribute);
-    // 법선 벡터 재계산
-    geometry.computeVertexNormals();  // 법선 벡터를 재계산
-
-    geometry.setAttribute(
-      'normal',
-      new THREE.BufferAttribute(new Float32Array(trianglePositions), normalNumComponents)
-    );
+    const bufferAttribute = new THREE.BufferAttribute(
+      new Float32Array(trianglePositions),
+      3
+    )
+    geometry.setAttribute('position', bufferAttribute );
+    geometry.setAttribute('normal', bufferAttribute);
     const cube = new THREE.Mesh(geometry, material);
 
     cubes.push(cube);
@@ -128,7 +113,8 @@ function main() {
   controls.enableDamping = true; // 부드러운 동작
   controls.target.set(0, 0, 0); // 아래 큐브와 구의 중심지점을 기준으로 카메라가 움직임. 
   controls.update();
-  // 필요한 변수들 설정
+
+  // 심장 박동에 필요한 변수들 설정
   const A = 0.7;  // 크기 변화의 범위 (최소값과 최대값 사이의 차이)
   const B = 2;    // 박동의 속도 (주파수)
   const D = 1;    // 기저 크기 (기본 크기)
@@ -143,13 +129,12 @@ function main() {
     }
 
     const sizeFactor = A * Math.sin(B * time) + D;  // 심장박동 함수
+
     cubes.forEach((cube, index) => {
-      const direction = new THREE.Vector3().subVectors(cubePositions[index], new THREE.Vector3(0, 0, 0)).normalize();
       const moveDirection = sizeFactor >= D ? 1 : -1;
-      const newPosition = direction.clone().multiplyScalar(sizeFactor * moveDirection); 
+      const newPosition = cubePositions[index].clone().multiplyScalar(sizeFactor * moveDirection); 
       const dampingFactor = 0.01;
       cube.position.lerp(newPosition, dampingFactor);
-
     });
 
     container.rotation.y = Math.sin( time) * 0.2 ;   

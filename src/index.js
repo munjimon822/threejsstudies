@@ -32,7 +32,10 @@ weeks.forEach((weekTitle, wi) => {
 });
 
 
-const extras = [{"title": "탱크", "html":"week3-1.html"}]
+const extras = [
+  {"title": "탱크", "html":"week3-1.html" },
+  {"title": "쇼핑몰 UFO", "html":"week5-1.html"},
+]
 
 extras.map((data) => {
   const linkbox = document.createElement("div")

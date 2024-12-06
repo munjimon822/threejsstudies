@@ -20,12 +20,18 @@ import background from "../assets/autumn_field_4k.hdr"
 
 import './week5-2.css'
 
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { FilmPass } from 'three/addons/postprocessing/FilmPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 //https://polyhaven.com/a/royal_esplanade
 //https://sketchfab.com/3d-models/ufo-flying-saucer-spaceship-ovni-094ce2baf6ee40aa8f083b7d0fcf0a9f
 //https://threejs.org/examples/webgl_loader_gltf
 
 
-let canvas, camera, scene, renderer, controls, root
+let canvas, camera, scene, renderer, controls, root, composer
 const position = { x: 0, y: 0 }
 const raycaster = new THREE.Raycaster()
 const clock = new THREE.Clock()
@@ -141,6 +147,44 @@ function init() {
   controls.update();
 
   window.addEventListener('resize', onWindowResize);
+
+  composer = new EffectComposer(renderer);
+  composer.setSize(window.innerWidth, window.innerHeight)
+  composer.addPass(new RenderPass(scene, camera));
+
+  const bloomPass = new UnrealBloomPass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight), // 해상도
+    0.25,  // 강도 (Bloom Strength)
+    0.1,  // 반경 (Bloom Radius)
+    0  // 임계값 (Bloom Threshold)
+  );
+
+  // 컴포저에 추가
+  composer.addPass(bloomPass);
+  const filmPass = new FilmPass(
+    0.7,   // 강도
+    false,  // 흑백
+  );
+  composer.addPass(filmPass);
+  const outputPass = new OutputPass();
+  composer.addPass(outputPass);
+
+  // const params = {
+  //   bloomStrength: 1.5,
+  //   bloomRadius: 0.4,
+  //   bloomThreshold: 0.85,
+  // };
+
+  // const gui = new GUI();
+  // gui.add(params, 'bloomStrength', 0, 3).onChange((value) => {
+  //   bloomPass.strength = value;
+  // });
+  // gui.add(params, 'bloomRadius', 0, 1).onChange((value) => {
+  //   bloomPass.radius = value;
+  // });
+  // gui.add(params, 'bloomThreshold', 0, 1).onChange((value) => {
+  //   bloomPass.threshold = value;
+  // });
 }
 
 
@@ -170,6 +214,7 @@ function replayAnimation() {
         action.reset(); // 처음으로 리셋
         action.play(); // 재생
       }
+
     });
     requestAnimationFrame(renderAnimation); // 렌더 루프 시작
   }
@@ -291,7 +336,7 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
 
   renderer.setSize(window.innerWidth, window.innerHeight);
-
+  composer.setSize(window.width, window.height)
   render();
 
 }
@@ -301,13 +346,18 @@ function onWindowResize() {
 function renderAnimation() {
   if (animationActive) {
     const delta = clock.getDelta()
-    if (mixer) mixer.update(delta)
+    if (mixer) {
+      mixer.update(delta)
+    }
 
-    renderer.render(scene, camera);
+    // renderer.render(scene, camera);
+    composer.render(delta)
     requestAnimationFrame(renderAnimation);
   }
 }
 
 function render() {
-  renderer.render(scene, camera);
+  // renderer.render(scene, camera);
+  const delta = clock.getDelta()
+  composer.render(delta)
 }

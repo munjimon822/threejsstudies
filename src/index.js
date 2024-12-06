@@ -35,6 +35,7 @@ weeks.forEach((weekTitle, wi) => {
 const extras = [
   {"title": "탱크", "html":"week3-1.html" },
   {"title": "쇼핑몰 UFO", "html":"week5-1.html"},
+  {"title":"활짝피는 히비스커스", "html":"week5-2.html"}
 ]
 
 extras.map((data) => {

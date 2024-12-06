@@ -19,7 +19,8 @@ module.exports = {
     index:'./src/index.js',
     ...weekEntries,
     week3_1:'./src/week3-1.js',
-    week5_1:'./src/week5-1.js'
+    week5_1:'./src/week5-1.js',
+    week5_2:'./src/week5-2.js'
   },
   mode:'development',
   output: {
@@ -51,6 +52,11 @@ module.exports = {
       filename: 'week5-1.html',
       chunks: ['week5_1'],
       title: 'Threejs Studies week5-1',
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'week5-2.html',
+      chunks: ['week5_2'],
+      title: 'Threejs Studies week5-2',
     }),
   ],
   module: {
